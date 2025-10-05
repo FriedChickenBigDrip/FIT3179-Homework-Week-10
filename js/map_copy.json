@@ -39,7 +39,7 @@
 
     {
       "data": {
-        "url": "data/VictMedianSalaryPerJob.csv"
+        "url": "https://friedchickenbigdrip.github.io/FIT3179-Homework-Week-10/data/VictMedianSalaryPerJob.csv"
       },
       "transform": [
         {
@@ -81,7 +81,7 @@
     },
     {
       "data": {
-        "url": "data/VictMedianSalaryPerJob.csv"
+        "url": "https://friedchickenbigdrip.github.io/FIT3179-Homework-Week-10/data/VictMedianSalaryPerJob.csv"
       },
       "transform": [
         {
@@ -116,4 +116,5 @@
     }
   ],
   "config": {}
+
 }

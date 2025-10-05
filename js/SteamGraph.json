@@ -1,0 +1,56 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "url": "data/RBABalSheetABS.csv"
+    },
+    "title": "Reserve Bank of Australia Balance Sheet Summary (2020 to 2024)",
+    "width": 800,
+    "height": 450,
+    "params": [
+        {
+            "name": "BS_Type_Selection",
+            "bind": {
+                "input": "select",
+                "options": [
+                null,
+                "Asset",
+                "Liability"
+                ],
+                "labels": [
+                "Show All",
+                "Asset",
+                "Liability"
+                ],
+                "name": "Balance Sheet Type Selection: "
+            }
+        },
+        {
+            "name": "grid",
+            "select": "interval",
+            "bind": "scales"
+        }
+        ],
+    "transform": [
+        {"filter": "BS_Type_Selection == null || datum.AssetOrLiab == BS_Type_Selection"}
+    ],
+    "mark": "area",
+    "encoding": {
+        "x": {
+        "field": "Series ID",
+        "type": "temporal",
+        "axis": {"domain": false, "format": "%d %b %Y", "tickSize": 10}
+        },
+        "y": {
+        "aggregate": "sum", "field": "PercOfTotLiab",
+        "axis": null,
+        "stack": "center"
+        },
+        "color": {"field":"Balance Sheet Item Name", "scale":{"scheme": "category20"}},
+        "tooltip": [
+            {"field": "AssetOrLiab", "type": "nominal", "title": "Balance Sheet Class"},
+            {"field": "Balance Sheet Item Name", "type": "nominal", "title": "Balance Sheet Item"},
+            {"field": "PercOfTotLiab", "type": "quantitative", "title": "Balance Sheet Amount ($millions)", "format": ",.0f"}
+
+        ]
+    }
+}

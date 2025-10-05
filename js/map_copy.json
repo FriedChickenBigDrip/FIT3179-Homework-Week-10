@@ -1,0 +1,119 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 800,
+  "height": 450,
+  "title": "% Change in Victorian Median Salary per Job by Region (2019 to 2022)",
+
+  "params": [
+    {
+      "name": "Year_selection",
+      "value": 2022,
+      "bind": {
+        "input": "range",
+        "min": 2019,
+        "max": 2022,
+        "step": 1,
+        "name": "Year:  "
+      }
+    }
+  ],
+  "projection": {
+    "type": "equirectangular",
+    "center": [145.1938, -36.2004],
+    "scale": 4000,
+    "translate": [425, 190]
+  },
+  "layer": [
+    {
+      "data": {
+        "url": "https://friedchickenbigdrip.github.io/FIT3179-Week-9-Homework/js/output.json",
+        "format": {"type": "topojson", "feature": "SA3_2021_AUST_GDA2020"}
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "#ddd",
+        "stroke": "white",
+        "strokeWidth": 1
+      }
+    },
+
+    {
+      "data": {
+        "url": "data/VictMedianSalaryPerJob.csv"
+      },
+      "transform": [
+        {
+          "lookup": "SA3 NAME",
+          "from": {
+            "data": {
+              "url": "https://friedchickenbigdrip.github.io/FIT3179-Week-9-Homework/js/output.json",
+              "format": {
+                "type": "topojson",
+                "feature": "SA3_2021_AUST_GDA2020"
+              }
+            },
+            "key": "properties.SA3_NAME21"
+          },
+          "as": "geo"
+        },
+        {"filter": "datum.Sup_Time_Period == Year_selection"}
+      ],
+      "mark": {"type": "geoshape", "stroke": "#fff", "strokeWidth": 0.5},
+      "encoding": {
+        "shape": {"field": "geo", "type": "geojson"},
+        "color": {
+          "field": "ChangePerc",
+          "type": "quantitative",
+          "scale": {
+            "type": "threshold",
+            "domain": [-0.15, -0.10, -0.05, 0, 0.05, 0.10, 0.15],
+            "range": ["#d73027", "#fc8d59", "#fdae61", "#fee08b", "#d9ef8b", "#a6d96a", "#66bd63", "#238b45"]
+          },
+          "title": "% Change in Median Salary",
+          "format": ".2%"
+        },
+        "tooltip": [
+          {"field": "SA3 NAME", "type": "nominal", "title": "Region"},
+          {"field": "TimePeriod", "type": "nominal", "title": "Observed Period"},
+          {"field": "ChangePerc", "type": "quantitative", "title": "% Change in Median Salary", "format": ".2%"}
+        ]
+      }
+    },
+    {
+      "data": {
+        "url": "data/VictMedianSalaryPerJob.csv"
+      },
+      "transform": [
+        {
+          "filter": "datum.Sup_Time_Period == Year_selection"
+        },
+        {
+          "window": [{"op": "rank", "as": "ranking"}],
+          "sort": [{"field": "ChangePerc", "order": "descending"}]
+        },
+        {"filter": "datum.ranking == 1"},
+        {
+          "calculate": "'Highest % Increase:; ' + datum['SA3 NAME'] + ' ' + format(datum['ChangePerc'], '.2%')",
+          "as": "text_annotation_raw"
+        },
+        {
+          "calculate": "split(datum.text_annotation_raw, ';')",
+          "as": "text_annotation"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "right",
+        "dx": -8,
+        "dy": -8,
+        "baseline": "middle",
+        "fontStyle": "italic"
+      },
+      "encoding": {
+        "longitude": {"field": "Long", "type": "quantitative"},
+        "latitude": {"field": "Lat", "type": "quantitative"},
+        "text": {"field": "text_annotation"}}
+    }
+  ],
+  "config": {}
+}
